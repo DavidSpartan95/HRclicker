@@ -1,90 +1,135 @@
 package com.example.hrclicker.screens
 
-import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.hrclicker.R
+import com.example.hrclicker.dataBase.User
+import com.example.hrclicker.dataBase.UserRepository
+import com.example.hrclicker.functions.containsEmoticons
+import com.example.hrclicker.functions.hasMoreThan16Characters
+import com.example.hrclicker.screens.nav.Screen
 import com.example.hrclicker.ui.theme.HR_dark_blue
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import java.net.HttpURLConnection
-import java.net.URL
-import java.security.SecureRandom
-import javax.net.ssl.HostnameVerifier
-import javax.net.ssl.HttpsURLConnection
-import javax.net.ssl.SSLContext
-import javax.net.ssl.X509TrustManager
-import javax.security.cert.X509Certificate
+
 
 @Composable
-fun HomeScreen(navController: NavController) {
-    //TODO this under this launch effect should ultimately print out Runner and Points from the URL
-    LaunchedEffect(true) {
-        GlobalScope.launch(Dispatchers.IO) {
-            val url = URL("https://haloruns.com/runners")
-            val urlConnection = url.openConnection() as HttpsURLConnection
+fun HomeScreen(navController: NavController, userRepository: UserRepository) {
 
-            try {
-                val insecureTrustManager = object : X509TrustManager {
-                    override fun checkClientTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {
-                        // Accept all client certificates
-                    }
+    var user: User? by remember { mutableStateOf(null) }
+    val context = LocalContext.current
 
-                    override fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {
-                        // Accept all server certificates
-                    }
+    LaunchedEffect(true){
 
-                    override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> {
-                        return arrayOf()
-                    }
+            userRepository.performDatabaseOperation(Dispatchers.IO){
+                val userList = userRepository.allUsers()
+                if (userList.isNotEmpty()){
+                    user = userList[0]
                 }
-
-                val sslContext = SSLContext.getInstance("SSL")
-                sslContext.init(null, arrayOf(insecureTrustManager), SecureRandom())
-                urlConnection.sslSocketFactory = sslContext.socketFactory
-                urlConnection.hostnameVerifier = HostnameVerifier { _, _ -> true }
-
-                val text = urlConnection.inputStream.bufferedReader().readText()
-                Log.d("UrlTest", text)
-                println("Hello $text")
-            } catch (e: Exception) {
-                Log.e("UrlTest", "Error: ${e.message}")
-                e.printStackTrace()
-            } finally {
-                urlConnection.disconnect()
             }
-        }
-    }
 
+    }
     Surface(Modifier.fillMaxSize(), color = HR_dark_blue) {
 
-        Column(Modifier.fillMaxWidth(), Arrangement.Top, Alignment.CenterHorizontally) {
+        if (user != null){
 
-            Text("HaloRuns", fontSize = 25.sp, color = Color.White, fontWeight = FontWeight.Bold)
-            Button(onClick = {
-                navController.navigate(route = "score_screen"){
+            Column(Modifier.fillMaxWidth(), Arrangement.Top, Alignment.CenterHorizontally) {
 
+                Text("HaloRuns", fontSize = 25.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                Text("Username: ${user!!.name}", fontSize = 20.sp, color = Color.White)
+
+                Button(onClick = {
+                    navController.navigate(route = "score_screen")
+                }) {
+                    Text(text = "Runner List")
                 }
-            }) {
+                Button(onClick = {
+                    navController.navigate(route = "battle_screen"){
+                        popUpTo(Screen.Home.route){
+                            inclusive = true
+                        }
+                    }
+                }) {
+                    Text(text = "Battle!")
+                }
+                Button(onClick = {
+                    navController.navigate(route = "clicker_screen")
+                }) {
+                    Text(text = "Grind")
+                }
 
+                //Image(painter = painterResource(R.drawable.ce), contentDescription = "")
             }
         }
 
+
+        else{
+
+            var name: String by remember {
+                mutableStateOf("")
+            }
+
+            Column(Modifier.fillMaxWidth(),Arrangement.Center, Alignment.CenterHorizontally) {
+
+                Row(Modifier.align(CenterHorizontally), Arrangement.Center) {
+
+                    Text(text = "Username: ", color = Color.White,modifier = Modifier.align(CenterVertically))
+                    TextField(value = name,
+                        onValueChange = {name = it},
+                        colors = TextFieldDefaults.textFieldColors(Color.White)
+                    )
+                }
+                Button(onClick = {
+
+                    if (hasMoreThan16Characters(name) || containsEmoticons(name)){
+                        Toast.makeText(
+                            context,
+                            "max 16 characters! no Emoticons!",
+                            Toast.LENGTH_LONG)
+                            .show()
+                    }else{
+
+                        userRepository.performDatabaseOperation(Dispatchers.IO){
+                            val userList = userRepository.allUsers()
+                            val tempUser = if (userList.isEmpty()){
+                                userRepository.addUser(
+                                    User(
+                                        name,
+                                        100, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                    )
+                                )
+                                userList[0]
+                            } else{
+                                userList[0]
+                            }
+                            CoroutineScope(Dispatchers.Main).launch {
+                                user = tempUser
+                            }
+                        }
+                    }
+                }) {
+                    Text(text = "START!")
+                }
+            }
+        }
     }
 }
 

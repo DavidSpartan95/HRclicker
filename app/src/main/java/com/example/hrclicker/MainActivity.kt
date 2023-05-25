@@ -7,22 +7,22 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.hrclicker.dataBase.AppDatabase
+import com.example.hrclicker.dataBase.UserRepository
 import com.example.hrclicker.screens.nav.SetupNavGraph
 import com.example.hrclicker.ui.theme.HR_dark_blue
 import com.example.hrclicker.ui.theme.HRclickerTheme
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         lateinit var navController: NavHostController
         super.onCreate(savedInstanceState)
-
+        val db = AppDatabase.getInstance(applicationContext)
+        val userRepository = UserRepository(db, lifecycleScope)
 
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
                     color = HR_dark_blue
                 ) {
                     navController = rememberNavController()
-                    SetupNavGraph(navController = navController)
+                    SetupNavGraph(navController = navController,userRepository = userRepository)
 
                 }
             }
