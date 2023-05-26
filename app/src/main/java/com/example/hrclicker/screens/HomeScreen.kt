@@ -26,6 +26,7 @@ import com.example.hrclicker.functions.containsEmoticons
 import com.example.hrclicker.functions.hasMoreThan16Characters
 import com.example.hrclicker.screens.nav.Screen
 import com.example.hrclicker.ui.theme.HR_dark_blue
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -57,29 +58,24 @@ fun HomeScreen(navController: NavController, userRepository: UserRepository) {
                 Text("Username: ${user!!.name}", fontSize = 20.sp, color = Color.White)
 
                 Button(onClick = {
-                    navController.navigate(route = "score_screen")
+                    val userJson = Gson().toJson(user)
+                    navController.navigate(route = "score_screen/$userJson")
                 }) {
                     Text(text = "Runner List")
                 }
                 Button(onClick = {
-                    navController.navigate(route = "battle_screen"){
-                        popUpTo(Screen.Home.route){
-                            inclusive = true
-                        }
-                    }
+                    val userJson = Gson().toJson(user)
+                    navController.navigate(route = "battle_screen/$userJson")
                 }) {
-                    Text(text = "Battle!")
+                    Text(text = "Challenge!")
                 }
                 Button(onClick = {
                     navController.navigate(route = "clicker_screen")
                 }) {
                     Text(text = "Grind")
                 }
-
-                //Image(painter = painterResource(R.drawable.ce), contentDescription = "")
             }
         }
-
 
         else{
 
@@ -108,18 +104,14 @@ fun HomeScreen(navController: NavController, userRepository: UserRepository) {
                     }else{
 
                         userRepository.performDatabaseOperation(Dispatchers.IO){
-                            val userList = userRepository.allUsers()
-                            val tempUser = if (userList.isEmpty()){
-                                userRepository.addUser(
+                            userRepository.addUser(
                                     User(
                                         name,
                                         100, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                     )
                                 )
-                                userList[0]
-                            } else{
-                                userList[0]
-                            }
+                            val tempUser: User = userRepository.allUsers()[0]
+
                             CoroutineScope(Dispatchers.Main).launch {
                                 user = tempUser
                             }

@@ -13,12 +13,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import com.example.hrclicker.R
+import com.example.hrclicker.dataBase.User
 import com.example.hrclicker.runnerData.Runner
 import com.example.hrclicker.screens.nav.Screen
 import com.example.hrclicker.ui.theme.Character
 
 @Composable
-fun BattleScreen(navController: NavController,runner: Runner) {
+fun BattleScreen(navController: NavController,runner: Runner, user: User) {
     var humanHp by remember {
         mutableStateOf(100)
     }
@@ -98,10 +99,10 @@ fun BattleScreen(navController: NavController,runner: Runner) {
                     monsterHp -= 10
                 },
                 modifier = Modifier
-                    .align(Alignment.BottomEnd)
+                    .align(Alignment.BottomCenter)
                     .padding(15.dp)
             ) {
-                Text(text = "Splice")
+                Text(text = "Attack")
             }
         }
     }
