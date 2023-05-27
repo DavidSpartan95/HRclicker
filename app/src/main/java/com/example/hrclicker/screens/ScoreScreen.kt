@@ -1,5 +1,6 @@
 package com.example.hrclicker.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
@@ -31,10 +33,11 @@ fun ScoreScreen(navController: NavController, userRepository: UserRepository, us
 
     var popupControl by remember { mutableStateOf(false) }
     var expand by remember { mutableStateOf(false) }
-    var selectCategory by remember { mutableStateOf("-???-") }
+    var selectCategory by remember { mutableStateOf("CE") }
     var runnerSelected by remember { mutableStateOf("") }
     var userJson: String? = null
     var runnerJson: String? = null
+    val context = LocalContext.current
 
 
     Surface(modifier = Modifier.fillMaxSize(),color = HR_dark_blue) {
@@ -46,7 +49,7 @@ fun ScoreScreen(navController: NavController, userRepository: UserRepository, us
                 Box(Modifier.fillMaxSize().background(grayTransparent)) {
                     Column(
                         Modifier
-                            .background(color = HR_dark_blue)
+                            .background(color = HR_dark_blue, shape = RoundedCornerShape(8.dp))
                             .size(250.dp)
                             .fillMaxWidth()
                             .padding(2.dp)
@@ -96,13 +99,14 @@ fun ScoreScreen(navController: NavController, userRepository: UserRepository, us
                                 }
                             }
                         }
-
                         Row(Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
                             Button(
                                 onClick = {
-                                    navController.navigate(route = "battle_screen/$userJson/$runnerJson")
+
+                                        navController.navigate(route = "battle_screen/$userJson/$runnerJson/$selectCategory")
+
                                 }) {
                                 Text(text = "Challenge")
                             }

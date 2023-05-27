@@ -61,7 +61,7 @@ fun Character(
 private fun Bar(
     modifier: Modifier = Modifier,
     activeBars: Int = 0,
-    barCount: Int = 20,
+    barCount: Int = 0,
     activeBarsColor: Color = Color.Green,
     inActiveBarsColor: Color = Color.Gray,
     barCornerRadius: Float = 0f,

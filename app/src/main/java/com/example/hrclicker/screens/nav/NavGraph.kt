@@ -57,6 +57,9 @@ fun SetupNavGraph(
                 },
                 navArgument("runner"){
                     type = NavType.StringType
+                },
+                navArgument("category"){
+                    type = NavType.StringType
                 }
             )
         ){backStackEntry ->
@@ -69,7 +72,8 @@ fun SetupNavGraph(
                     BattleScreen(
                         navController = navController,
                         runner = runner,
-                        user = user
+                        user = user,
+                        category = backStackEntry.arguments?.getString("category")!!
                     )
                 }
             }

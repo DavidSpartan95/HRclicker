@@ -64,12 +64,6 @@ fun HomeScreen(navController: NavController, userRepository: UserRepository) {
                     Text(text = "Runner List")
                 }
                 Button(onClick = {
-                    val userJson = Gson().toJson(user)
-                    navController.navigate(route = "battle_screen/$userJson")
-                }) {
-                    Text(text = "Challenge!")
-                }
-                Button(onClick = {
                     navController.navigate(route = "clicker_screen")
                 }) {
                     Text(text = "Grind")
