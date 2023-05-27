@@ -9,10 +9,7 @@ import androidx.navigation.navArgument
 import com.example.hrclicker.dataBase.User
 import com.example.hrclicker.dataBase.UserRepository
 import com.example.hrclicker.runnerData.Runner
-import com.example.hrclicker.screens.BattleScreen
-import com.example.hrclicker.screens.ClickerScreen
-import com.example.hrclicker.screens.HomeScreen
-import com.example.hrclicker.screens.ScoreScreen
+import com.example.hrclicker.screens.*
 import com.google.gson.Gson
 
 @Composable
@@ -82,6 +79,21 @@ fun SetupNavGraph(
             route = Screen.Clicker.route,
         ){
             ClickerScreen(navController = navController, userRepository = userRepository)
+        }
+        composable(
+            route = Screen.Loadout.route,
+            arguments = listOf(
+                navArgument("user"){
+                    type = NavType.StringType
+                }
+            )
+        ){backStackEntry ->
+            backStackEntry.arguments?.getString("user")?.let {
+                    json ->
+                val user = Gson().fromJson(json, User::class.java)
+                LoadoutScreen(navController = navController, userRepository = userRepository,user = user)
+            }
+
         }
     }
 }

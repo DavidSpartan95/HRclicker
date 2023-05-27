@@ -52,13 +52,14 @@ fun HomeScreen(navController: NavController, userRepository: UserRepository) {
 
         if (user != null){
 
+            val userJson = Gson().toJson(user)
+
             Column(Modifier.fillMaxWidth(), Arrangement.Top, Alignment.CenterHorizontally) {
 
                 Text("HaloRuns", fontSize = 25.sp, color = Color.White, fontWeight = FontWeight.Bold)
                 Text("Username: ${user!!.name}", fontSize = 20.sp, color = Color.White)
 
                 Button(onClick = {
-                    val userJson = Gson().toJson(user)
                     navController.navigate(route = "score_screen/$userJson")
                 }) {
                     Text(text = "Runner List")
@@ -67,6 +68,11 @@ fun HomeScreen(navController: NavController, userRepository: UserRepository) {
                     navController.navigate(route = "clicker_screen")
                 }) {
                     Text(text = "Grind")
+                }
+                Button(onClick = {
+                    navController.navigate(route = "loadout_screen/$userJson")
+                }) {
+                    Text(text = "loadout")
                 }
             }
         }

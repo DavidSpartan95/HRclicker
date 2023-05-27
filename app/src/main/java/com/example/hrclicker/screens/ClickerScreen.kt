@@ -2,6 +2,7 @@ package com.example.hrclicker.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -86,6 +87,7 @@ fun ClickerScreen(navController: NavController, userRepository: UserRepository) 
                             Modifier
                                 .background(Color(8, 0, 30), shape = RoundedCornerShape(16.dp))
                                 .size(100.dp)
+                                .border(width = 1.dp,color = Color.White ,shape = RoundedCornerShape(16.dp))
                                 .clickable {
                                     if (totalPoints(player!!) < cap){
                                         userRepository.performDatabaseOperation(Dispatchers.IO){
