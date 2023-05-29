@@ -70,7 +70,8 @@ fun SetupNavGraph(
                         navController = navController,
                         runner = runner,
                         user = user,
-                        category = backStackEntry.arguments?.getString("category")!!
+                        category = backStackEntry.arguments?.getString("category")!!,
+                        userRepository = userRepository
                     )
                 }
             }
@@ -91,9 +92,8 @@ fun SetupNavGraph(
             backStackEntry.arguments?.getString("user")?.let {
                     json ->
                 val user = Gson().fromJson(json, User::class.java)
-                LoadoutScreen(navController = navController, userRepository = userRepository,user = user)
+                LoadoutScreen(navController = navController, userRepository = userRepository,player = user)
             }
-
         }
     }
 }

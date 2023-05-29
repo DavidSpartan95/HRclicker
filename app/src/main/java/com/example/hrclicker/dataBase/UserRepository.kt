@@ -18,6 +18,15 @@ coroutineScope : CoroutineScope
         appDatabase.userDao().addPoints(game)
     }
 
+    fun learnNewMove(newMove:String){
+        appDatabase.userDao().learnMove(newMove)
+    }
+    fun swapMove(move:String, were:Int){
+        appDatabase.userDao().replaceMove(move,were)
+    }
+    fun increaseCap(oldCap:Int){
+        appDatabase.userDao().increaseCap(oldCap)
+    }
     fun performDatabaseOperation (
         dispatcher: CoroutineDispatcher,
         databaseOperation : suspend () -> Unit

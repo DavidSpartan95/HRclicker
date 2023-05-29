@@ -1,30 +1,21 @@
 package com.example.hrclicker.screens
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.hrclicker.R
 import com.example.hrclicker.dataBase.User
 import com.example.hrclicker.dataBase.UserRepository
 import com.example.hrclicker.functions.containsEmoticons
 import com.example.hrclicker.functions.hasMoreThan16Characters
-import com.example.hrclicker.screens.nav.Screen
 import com.example.hrclicker.ui.theme.HR_dark_blue
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -54,7 +45,7 @@ fun HomeScreen(navController: NavController, userRepository: UserRepository) {
 
             val userJson = Gson().toJson(user)
 
-            Column(Modifier.fillMaxWidth(), Arrangement.Top, Alignment.CenterHorizontally) {
+            Column(Modifier.fillMaxWidth(), Arrangement.Top, CenterHorizontally) {
 
                 Text("HaloRuns", fontSize = 25.sp, color = Color.White, fontWeight = FontWeight.Bold)
                 Text("Username: ${user!!.name}", fontSize = 20.sp, color = Color.White)
@@ -83,7 +74,7 @@ fun HomeScreen(navController: NavController, userRepository: UserRepository) {
                 mutableStateOf("")
             }
 
-            Column(Modifier.fillMaxWidth(),Arrangement.Center, Alignment.CenterHorizontally) {
+            Column(Modifier.fillMaxWidth(),Arrangement.Center, CenterHorizontally) {
 
                 Row(Modifier.align(CenterHorizontally), Arrangement.Center) {
 

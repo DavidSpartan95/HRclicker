@@ -15,15 +15,17 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import com.example.hrclicker.R
 import com.example.hrclicker.dataBase.User
+import com.example.hrclicker.dataBase.UserRepository
 import com.example.hrclicker.functions.DamageClac
 import com.example.hrclicker.functions.DamageClacBoss
 import com.example.hrclicker.runnerData.Runner
 import com.example.hrclicker.screens.nav.Screen
 import com.example.hrclicker.ui.theme.Character
 import com.example.hrclicker.ui.theme.HR_dark_blue
+import kotlinx.coroutines.Dispatchers
 
 @Composable
-fun BattleScreen(navController: NavController,runner: Runner, user: User, category: String) {
+fun BattleScreen(navController: NavController,userRepository: UserRepository, runner: Runner, user: User, category: String) {
     var humanHp by remember {
         mutableStateOf(user.HP)
     }
@@ -36,20 +38,40 @@ fun BattleScreen(navController: NavController,runner: Runner, user: User, catego
     var gameOverText by remember {
         mutableStateOf("")
     }
-    var moveSelelcted by remember {
+    var moveSelected by remember {
         mutableStateOf(0)
     }
-    LaunchedEffect(moveSelelcted) {
-        if (moveSelelcted>0){
+    var playerMSG by remember {
+        mutableStateOf("")
+    }
+    var monsterMSG by remember {
+        mutableStateOf("")
+    }
+    var moveUsed by remember {
+        mutableStateOf("")
+    }
+    var damage  by remember {
+        mutableStateOf(0)
+    }
+    var damageTaken = 0
+    LaunchedEffect(moveSelected) {
+        if (moveSelected>0){
+            playerMSG = "${user.name} used $moveUsed ${runner.name} took $damage"
 
             delay(300)
-            humanHp -= DamageClacBoss(user,runner,category).coerceAtLeast(1)
+            damageTaken = DamageClacBoss(user,runner,category).coerceAtLeast(1)
+            humanHp -= damageTaken
+            monsterMSG = "${runner.name} used Reroute ${user.name} took $damageTaken"
             if (humanHp <= 0){
                 isGameOver = true
                 gameOverText = "you lost"
+
             }else if(monsterHp <= 0) {
                 isGameOver = true
                 gameOverText = "you Won"
+                userRepository.performDatabaseOperation(Dispatchers.IO){
+                    userRepository.increaseCap(user.cap)
+                }
             }
         }
     }
@@ -79,10 +101,11 @@ fun BattleScreen(navController: NavController,runner: Runner, user: User, catego
                 }
             }
         } else {
+            
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .align(Alignment.Center),
+                    .align(Alignment.TopCenter),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 // you can animate the boxes to move the characters
@@ -103,57 +126,87 @@ fun BattleScreen(navController: NavController,runner: Runner, user: User, catego
                     )
                 }
             }
+            //message box
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),) {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(150.dp)
+                        .background(HR_dark_blue)
+                        .border(width = 1.dp, color = Color.White,)
+                ) {
+                    Column() {
+                        Text(text = "Turn $moveSelected", color = Color.White)
+                        Text(text = playerMSG, color = Color.White)
+                        Text(text = monsterMSG, color = Color.White)
+                    }
+                }
+
+
+            }
             //Action selection Box
             Box(
-                Modifier.fillMaxWidth()
-                    .heightIn(200.dp)
+                Modifier
+                    .fillMaxWidth()
+                    .heightIn(150.dp)
                     .background(HR_dark_blue)
                     .align(Alignment.BottomCenter)
                     .border(width = 1.dp, color = Color.White,)
             ) {
                 Button(
                     onClick = {
-                        monsterHp -= DamageClac(user,runner,category).coerceAtLeast(1)
-                        moveSelelcted++
+                        damage = DamageClac(user.move1,user,runner,category).coerceAtLeast(1)
+                        moveUsed = user.move1
+                        monsterHp -= damage
+                        moveSelected++
                     },
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(15.dp)
                 ) {
-                    Text(text = "Move 1")
+                    Text(text = user.move1)
                 }
                 Button(
                     onClick = {
-                        monsterHp -= DamageClac(user,runner,category).coerceAtLeast(1)
-                        moveSelelcted++
+                        damage = DamageClac(user.move2,user,runner,category).coerceAtLeast(1)
+                        moveUsed = user.move2
+                        monsterHp -= damage
+                        moveSelected++
                     },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(15.dp)
                 ) {
-                    Text(text = "Move 2")
+                    Text(text = user.move2)
                 }
                 Button(
                     onClick = {
-                        monsterHp -= DamageClac(user,runner,category).coerceAtLeast(1)
-                        moveSelelcted++
+                        damage = DamageClac(user.move3,user,runner,category).coerceAtLeast(1)
+                        moveUsed = user.move3
+                        monsterHp -= damage
+                        moveSelected++
                     },
                     modifier = Modifier
                         .align(Alignment.BottomStart)
                         .padding(15.dp)
                 ) {
-                    Text(text = "Move 3")
+                    Text(text = user.move3)
                 }
                 Button(
                     onClick = {
-                        monsterHp -= DamageClac(user,runner,category).coerceAtLeast(1)
-                        moveSelelcted++
+                        damage = DamageClac(user.move4,user,runner,category).coerceAtLeast(1)
+                        moveUsed = user.move4
+                        monsterHp -= damage
+                        moveSelected++
                     },
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(15.dp)
                 ) {
-                    Text(text = "Move 4")
+                    Text(text = user.move4)
                 }
             }
 

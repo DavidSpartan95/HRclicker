@@ -19,12 +19,13 @@ data class User(
     var H5atk:Int,
     var infinite_atk:Int,
     var ability: String = "",
-    var move1: String = "Attack",
+    var move1: String = "Reroute",
     var move2: String = "Empty",
     var move3: String = "Empty",
     var move4: String = "Empty",
+    var cap: Int = 50,
     @TypeConverters(StringArrayConverter::class)
-    var moves: Array<String> = arrayOf("Attack")
+    var moves: Array<String> = arrayOf("Reroute")
 
 ) {
     @PrimaryKey(autoGenerate = true)

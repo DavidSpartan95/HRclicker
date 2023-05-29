@@ -12,6 +12,17 @@ interface UserDao {
     @Query("SELECT * FROM User")
     fun getAllUsers(): List<User>
     @Transaction
+    fun increaseCap(oldCap:Int){
+        val user = getAllUsers()[0]
+        user.cap = when(oldCap){
+            50 -> 500
+            500 -> 1000
+            1000 -> 2000
+            else -> oldCap
+        }
+        updateExistingUser(user)
+    }
+    @Transaction
     fun addPoints(game: String){
         val users = getAllUsers()
         val user = users[0]
@@ -28,7 +39,24 @@ interface UserDao {
             else -> {}
         }
         updateExistingUser(user)
+    }
+    @Transaction
+    fun learnMove(newMove:String){
+        val user = getAllUsers()[0]
+        user.moves += newMove
+        updateExistingUser(user)
+    }
+    @Transaction
+    fun replaceMove(move:String,were:Int){
+        val user = getAllUsers()[0]
 
+        when(were){
+            1 -> user.move1 = move
+            2 -> user.move2 = move
+            3 -> user.move3 = move
+            4 -> user.move4 = move
+        }
+        updateExistingUser(user)
     }
 
 }
