@@ -27,6 +27,9 @@ coroutineScope : CoroutineScope
     fun increaseCap(oldCap:Int){
         appDatabase.userDao().increaseCap(oldCap)
     }
+    fun deleteUser(username:String){
+        appDatabase.userDao().deleteUserByName(username)
+    }
     fun performDatabaseOperation (
         dispatcher: CoroutineDispatcher,
         databaseOperation : suspend () -> Unit

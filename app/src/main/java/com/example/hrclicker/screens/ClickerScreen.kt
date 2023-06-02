@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.hrclicker.dataBase.User
 import com.example.hrclicker.dataBase.UserRepository
+import com.example.hrclicker.functions.gameCap
 import com.example.hrclicker.functions.moveUnlockCheck
 import com.example.hrclicker.functions.pointsByGame
 import com.example.hrclicker.functions.totalPoints
@@ -46,6 +47,9 @@ fun ClickerScreen(navController: NavController, userRepository: UserRepository) 
     var player: User? by remember { mutableStateOf(null) }
     var p by remember { mutableStateOf(0) }
     var cap: Int? by remember { mutableStateOf(null) }
+    var count:Int by remember {
+        mutableStateOf(0)
+    }
     val context = LocalContext.current
 
 
@@ -90,22 +94,45 @@ fun ClickerScreen(navController: NavController, userRepository: UserRepository) 
                             Modifier
                                 .background(Color(8, 0, 30), shape = RoundedCornerShape(16.dp))
                                 .size(100.dp)
-                                .border(width = 1.dp,color = Color.White ,shape = RoundedCornerShape(16.dp))
+                                .border(
+                                    width = 1.dp,
+                                    color = Color.White,
+                                    shape = RoundedCornerShape(16.dp)
+                                )
                                 .clickable {
-                                    if (totalPoints(player!!) < cap!!){
-                                        userRepository.performDatabaseOperation(Dispatchers.IO){
+                                    if (totalPoints(player!!) < cap!! && !gameCap(
+                                            pointsByGame(
+                                                player!!,
+                                                clickButtons[index].title
+                                            ), clickButtons[index].title
+                                        )
+                                    ) {
+                                        userRepository.performDatabaseOperation(Dispatchers.IO) {
                                             userRepository.addPoints(clickButtons[index].title)
                                             moveUnlockCheck(
-                                                pointsByGame(player!!, clickButtons[index].title)+1,
+                                                pointsByGame(
+                                                    player!!,
+                                                    clickButtons[index].title
+                                                ) + 1,
                                                 userRepository,
                                                 clickButtons[index].title,
                                                 context
-                                            ){
+                                            ) {
                                                 p++
                                             }
                                         }
-                                    }else{
-                                        Toast.makeText(context,"Challenge next runner to increase the cap!,",Toast.LENGTH_SHORT,).show()
+                                    } else {
+                                        if (count < 5) {
+                                            count++
+                                            Toast
+                                                .makeText(
+                                                    context,
+                                                    "Challenge next runner to increase the cap!,",
+                                                    Toast.LENGTH_SHORT,
+                                                )
+                                                .show()
+
+                                        }
                                     }
                                 }
 

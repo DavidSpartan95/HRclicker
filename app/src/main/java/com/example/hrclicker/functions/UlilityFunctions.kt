@@ -26,6 +26,21 @@ fun pointsByGame(user: User, gameName: String): Int{
         "Reach" -> return user.reachAtk
         "ODST" -> return user.ODSTatk
         "Infinite" -> return user.infinite_atk
-        else -> return 69
+        else -> return 0
+    }
+}
+fun gameCap(points:Int, gameName: String): Boolean{
+
+    return when(gameName){
+        "CE" -> points > 4000
+        "H2" -> points > 5650
+        "H2A"-> points > 5650
+        "H3" -> points > 3800
+        "H4" -> points > 3600
+        "H5" -> points > 4100
+        "Reach" -> points > 4100
+        "ODST" -> points > 4100
+        "Infinite" -> points > 1000
+        else -> false
     }
 }
