@@ -77,7 +77,9 @@ fun HomeScreen(navController: NavController, userRepository: UserRepository) {
                 Button(onClick = {
                     navController.navigate(route = "clicker_screen")
                 }) {
-                    Text(text = "GrindHard")
+
+                    Text(text = "GrindEasy")
+
                 }
                 Button(onClick = {
                     navController.navigate(route = "loadout_screen/$userJson")
