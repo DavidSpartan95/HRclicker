@@ -5,13 +5,18 @@ import com.example.hrclicker.runnerData.Runner
 import kotlin.random.Random
 
 
-fun DamageClac(move:String,player: User, boss: Runner, mode: String): Int{
-    val pow = powInt(moveDescription(move)).toDouble()
-    println(pow)
-    val acc = accInt(move)
+fun DamageClac(move:String,player: User, boss: Runner, mode: String, boost:Double, heal:Boolean? = null): Int{
+    var pow = if (heal == true){
+          healInt(moveDescription(move)).toDouble()
+    }else {
+          powInt(moveDescription(move)).toDouble()
+    }
+    println(boost)
+    pow *= boost
+    val acc = accInt(moveDescription(move))
     var atk: Int
     var def: Int
-    println(mode)
+
     when (mode) {
         "CE" -> {
             atk = player.H1atk
@@ -58,16 +63,18 @@ fun DamageClac(move:String,player: User, boss: Runner, mode: String): Int{
     atk = atk.coerceAtLeast(1)
     def = def.coerceAtLeast(1)
     val randomFactor = Random.nextDouble(0.9, 1.1) // Random factor between 0.9 and 1.1
-    val damage = (pow * Effectiveness(atk.toDouble(), def.toDouble()) * randomFactor).toInt()
+    var damage = (pow * Effectiveness(atk.toDouble(), def.toDouble()) * randomFactor).toInt()
 
-    println("x${Effectiveness(atk.toDouble(), def.toDouble())}")
+    //Acc check
+    val accRoll = Random.nextInt(0,100)
+    if (acc < accRoll){ damage = 0}
     println("Damage is $damage")
 
     return damage
 
 }
 
-fun DamageClacBoss(player: User, boss: Runner, mode: String): Int{
+fun DamageClacBoss(player: User, boss: Runner, mode: String,eva: Double): Int{
     var pow = 10
     var atk: Int
     var def: Int
@@ -117,8 +124,13 @@ fun DamageClacBoss(player: User, boss: Runner, mode: String): Int{
     atk = atk.coerceAtLeast(1)
     def = def.coerceAtLeast(1)
     val randomFactor = Random.nextDouble(0.9, 1.1)
-    return  (pow*Effectiveness(atk.toDouble(),def.toDouble())*randomFactor).toInt()
+    val accRoll = Random.nextDouble(0.0,1.0)
+    if (accRoll <= eva){
+        return 0
+    }else{
+        return (pow*Effectiveness(atk.toDouble(),def.toDouble())*randomFactor).toInt().coerceAtLeast(4)
 
+    }
 }
 
 fun Effectiveness(atk:Double, def:Double): Double {

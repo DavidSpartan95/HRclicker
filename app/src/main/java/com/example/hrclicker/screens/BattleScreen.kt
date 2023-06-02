@@ -16,8 +16,7 @@ import kotlinx.coroutines.delay
 import com.example.hrclicker.R
 import com.example.hrclicker.dataBase.User
 import com.example.hrclicker.dataBase.UserRepository
-import com.example.hrclicker.functions.DamageClac
-import com.example.hrclicker.functions.DamageClacBoss
+import com.example.hrclicker.functions.*
 import com.example.hrclicker.runnerData.Runner
 import com.example.hrclicker.screens.nav.Screen
 import com.example.hrclicker.ui.theme.Character
@@ -50,18 +49,56 @@ fun BattleScreen(navController: NavController,userRepository: UserRepository, ru
     var moveUsed by remember {
         mutableStateOf("")
     }
-    var damage  by remember {
+    var damage by remember {
         mutableStateOf(0)
     }
     var damageTaken = 0
+    var boostUsed by remember {
+        mutableStateOf(false)
+    }
+    var evasionBoostUsed by remember {
+        mutableStateOf(false)
+    }
+    var boostMultiplier by remember {
+        mutableStateOf(1.0)
+    }
+    var evasion by remember {
+        mutableStateOf(0.0)
+    }
+    var healUsed by remember {
+        mutableStateOf(false)
+    }
+    var heal by remember {
+        mutableStateOf(0)
+    }
+
     LaunchedEffect(moveSelected) {
         if (moveSelected>0){
-            playerMSG = "${user.name} used $moveUsed ${runner.name} took $damage"
+            monsterMSG = ""
+            if (damage > 0){
+                playerMSG = "${user.name} used $moveUsed ${runner.name} took $damage"
+            }else if (damage == 0 && !boostUsed &&!evasionBoostUsed && !healUsed){
+                playerMSG = "${user.name} used $moveUsed but missed!"
+            }else if (boostUsed){
+                playerMSG = "${user.name} used $moveUsed , Atk increased "
+                boostUsed = false
+            }else if (evasionBoostUsed){
+                playerMSG = "${user.name} used $moveUsed , EVA increased "
+                evasionBoostUsed = false
+            }else if (healUsed){
+                playerMSG = "${user.name} used $moveUsed , regained $heal"
+                healUsed = false
+            }
 
-            delay(300)
-            damageTaken = DamageClacBoss(user,runner,category).coerceAtLeast(1)
-            humanHp -= damageTaken
-            monsterMSG = "${runner.name} used Reroute ${user.name} took $damageTaken"
+            delay(1000)
+            damageTaken = DamageClacBoss(user,runner,category,evasion)
+            if (damageTaken <= 0){
+                monsterMSG = "${runner.name} missed!"
+            }else{
+                humanHp -= damageTaken
+                monsterMSG = "${runner.name} used Reroute ${user.name} took $damageTaken"
+            }
+
             if (humanHp <= 0){
                 isGameOver = true
                 gameOverText = "you lost"
@@ -70,7 +107,11 @@ fun BattleScreen(navController: NavController,userRepository: UserRepository, ru
                 isGameOver = true
                 gameOverText = "you Won"
                 userRepository.performDatabaseOperation(Dispatchers.IO){
-                    userRepository.increaseCap(user.cap)
+                    if (user.cap == 12950){
+
+                    }else{
+                        userRepository.increaseCap(user.cap)
+                    }
                 }
             }
         }
@@ -148,6 +189,13 @@ fun BattleScreen(navController: NavController,userRepository: UserRepository, ru
 
             }
             //Action selection Box
+            val buttonArr = arrayOf(
+                Pair(user.move1,Alignment.TopStart),
+                Pair(user.move2,Alignment.TopEnd),
+                Pair(user.move3,Alignment.BottomStart),
+                Pair(user.move4,Alignment.BottomEnd)
+            )
+
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -156,60 +204,51 @@ fun BattleScreen(navController: NavController,userRepository: UserRepository, ru
                     .align(Alignment.BottomCenter)
                     .border(width = 1.dp, color = Color.White,)
             ) {
-                Button(
-                    onClick = {
-                        damage = DamageClac(user.move1,user,runner,category).coerceAtLeast(1)
-                        moveUsed = user.move1
-                        monsterHp -= damage
-                        moveSelected++
-                    },
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(15.dp)
-                ) {
-                    Text(text = user.move1)
-                }
-                Button(
-                    onClick = {
-                        damage = DamageClac(user.move2,user,runner,category).coerceAtLeast(1)
-                        moveUsed = user.move2
-                        monsterHp -= damage
-                        moveSelected++
-                    },
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(15.dp)
-                ) {
-                    Text(text = user.move2)
-                }
-                Button(
-                    onClick = {
-                        damage = DamageClac(user.move3,user,runner,category).coerceAtLeast(1)
-                        moveUsed = user.move3
-                        monsterHp -= damage
-                        moveSelected++
-                    },
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(15.dp)
-                ) {
-                    Text(text = user.move3)
-                }
-                Button(
-                    onClick = {
-                        damage = DamageClac(user.move4,user,runner,category).coerceAtLeast(1)
-                        moveUsed = user.move4
-                        monsterHp -= damage
-                        moveSelected++
-                    },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(15.dp)
-                ) {
-                    Text(text = user.move4)
+                for (x in buttonArr){
+                    Button(
+                        onClick = {
+                            if (monsterMSG != ""|| moveSelected == 0 ){
+                                if (atkDouble(moveDescription(x.first)) > 1.0){
+                                    boostMultiplier += (atkDouble(moveDescription(x.first))-1)
+                                    boostUsed = true
+                                    moveSelected++
+                                }
+                                else if (evaDouble(moveDescription(x.first)) > 1.0){
+                                    evasion += (evaDouble(moveDescription(x.first))-1)
+                                    evasionBoostUsed = true
+                                    if (evasion> 0.7){
+                                        evasion = 0.7
+                                    }
+                                    moveSelected++
+                                }
+                                else if (healInt(moveDescription(x.first)) > 0){
+                                    heal = DamageClac(x.first,user,runner,category, boostMultiplier, true)
+                                    healUsed = true
+                                    val tempHeal = user.HP -humanHp
+                                    humanHp += heal
+                                    if (humanHp > user.HP){
+                                        heal = tempHeal
+                                        humanHp = user.HP
+                                    }
+                                    moveSelected++
+                                }
+                                else{
+                                    println(atkDouble(moveDescription(x.first)))
+                                    damage = DamageClac(x.first,user,runner,category, boostMultiplier)
+                                    monsterHp -= damage
+                                    moveSelected++
+                                }
+                                moveUsed = x.first
+                            }
+                        },
+                        modifier = Modifier
+                            .align(x.second)
+                            .padding(15.dp)
+                    ) {
+                        Text(text = x.first)
+                    }
                 }
             }
-
         }
     }
 }

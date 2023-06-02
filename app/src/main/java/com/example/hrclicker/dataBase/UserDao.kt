@@ -1,12 +1,18 @@
 package com.example.hrclicker.dataBase
 
 import androidx.room.*
+import com.example.hrclicker.functions.totalPoints
+import com.example.hrclicker.runnerData.RunnerList
 
 @Dao
 interface UserDao {
 
     @Insert
     fun insertUser(user: User)
+    @Delete
+    fun deleteUser(user: User)
+    @Query("DELETE FROM User WHERE name = :name")
+    fun deleteUserByName(name: String)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun updateExistingUser(user: User)
     @Query("SELECT * FROM User")
@@ -14,11 +20,12 @@ interface UserDao {
     @Transaction
     fun increaseCap(oldCap:Int){
         val user = getAllUsers()[0]
-        user.cap = when(oldCap){
-            50 -> 500
-            500 -> 1000
-            1000 -> 2000
-            else -> oldCap
+
+        for (x in RunnerList){
+            if (x.score > totalPoints(user)){
+                user.cap = x.score
+                break
+            }
         }
         updateExistingUser(user)
     }
