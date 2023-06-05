@@ -14,8 +14,8 @@ coroutineScope : CoroutineScope
     fun allUsers():List<User>{
         return appDatabase.userDao().getAllUsers()
     }
-    fun addPoints(game:String){
-        appDatabase.userDao().addPoints(game)
+    fun addPoints(game:String, points:Int){
+        appDatabase.userDao().addPoints(game,points)
     }
 
     fun learnNewMove(newMove:String){

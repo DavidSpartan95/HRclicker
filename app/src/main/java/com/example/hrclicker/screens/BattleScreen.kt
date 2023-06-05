@@ -209,11 +209,13 @@ fun BattleScreen(navController: NavController,userRepository: UserRepository, ru
                         onClick = {
                             if (monsterMSG != ""|| moveSelected == 0 ){
                                 if (atkDouble(moveDescription(x.first)) > 1.0){
+                                    damage = 0
                                     boostMultiplier += (atkDouble(moveDescription(x.first))-1)
                                     boostUsed = true
                                     moveSelected++
                                 }
                                 else if (evaDouble(moveDescription(x.first)) > 1.0){
+                                    damage = 0
                                     evasion += (evaDouble(moveDescription(x.first))-1)
                                     evasionBoostUsed = true
                                     if (evasion> 0.7){
@@ -222,6 +224,7 @@ fun BattleScreen(navController: NavController,userRepository: UserRepository, ru
                                     moveSelected++
                                 }
                                 else if (healInt(moveDescription(x.first)) > 0){
+                                    damage = 0
                                     heal = DamageClac(x.first,user,runner,category, boostMultiplier, true)
                                     healUsed = true
                                     val tempHeal = user.HP -humanHp

@@ -113,14 +113,15 @@ fun moveUnlockCheck(
     userRepository: UserRepository,
     category: String ,
     context:Context,
+    prev: Int,
     update:()->Unit){
 
     if (category == "CE"){
-        when(points){
-            100 -> addMove("BackPackReload", userRepository,context){update.invoke()}
-            850 -> addMove("CamoJumo", userRepository,context){update.invoke()}
-            1500 -> addMove("ShilledBump", userRepository,context){update.invoke()}
-            4000 -> addMove("BOOL", userRepository,context){update.invoke()}
+        when{
+            points > 100 && prev < 100-> addMove("BackPackReload", userRepository,context){update.invoke()}
+            points > 850 && prev < 850-> addMove("CamoJumo", userRepository,context){update.invoke()}
+            points > 1500 && prev < 1500 -> addMove("ShilledBump", userRepository,context){update.invoke()}
+            points > 4000 && prev < 4000 -> addMove("BOOL", userRepository,context){update.invoke()}
             else -> update.invoke()
         }
     }
@@ -134,69 +135,75 @@ fun moveUnlockCheck(
             else -> update.invoke()
         }
     }
-    if (category == "H2A"){
-        when(points){
-            200 -> addMove("SwordCancel", userRepository,context){update.invoke()}
-            1000 -> addMove("YY", userRepository,context){update.invoke()}
-            1500 -> addMove("PressureLaunch", userRepository,context){update.invoke()}
-            5650 -> addMove("PrisonSkip", userRepository,context){update.invoke()}
+    if (category == "H2A") {
+        when {
+            points > 200 && prev < 200 -> addMove("SwordCancel", userRepository, context) { update.invoke() }
+            points > 1000 && prev < 1000 -> addMove("YY", userRepository, context) { update.invoke() }
+            points > 1500 && prev < 1500 -> addMove("PressureLaunch", userRepository, context) { update.invoke() }
+            points > 5650 && prev < 5650 -> addMove("PrisonSkip", userRepository, context) { update.invoke() }
             else -> update.invoke()
         }
     }
-    if (category == "H3"){
-        when(points){
-            100 -> addMove("GravHammer", userRepository,context){update.invoke()}
-            1000 -> addMove("PowerDrain", userRepository,context){update.invoke()}
-            1500 -> addMove("BoxLaunch", userRepository,context){update.invoke()}
-            3800 -> addMove("DCLaunch", userRepository,context){update.invoke()}
+
+    if (category == "H3") {
+        when {
+            points > 100 && prev < 100 -> addMove("GravHammer", userRepository, context) { update.invoke() }
+            points > 1000 && prev < 1000 -> addMove("PowerDrain", userRepository, context) { update.invoke() }
+            points > 1500 && prev < 1500 -> addMove("BoxLaunch", userRepository, context) { update.invoke() }
+            points > 3800 && prev < 3800 -> addMove("DCLaunch", userRepository, context) { update.invoke() }
             else -> update.invoke()
         }
     }
-    if (category == "ODST"){
-        when(points){
-            100 -> addMove("AI_teleport", userRepository,context){update.invoke()}
-            800 -> addMove("BansheeGrab", userRepository,context){update.invoke()}
-            2000 -> addMove("ConeLaunch", userRepository,context){update.invoke()}
-            4100 -> addMove("CoastalOOB", userRepository,context){update.invoke()}
+
+    if (category == "ODST") {
+        when {
+            points > 100 && prev < 100 -> addMove("AI_teleport", userRepository, context) { update.invoke() }
+            points > 800 && prev < 800 -> addMove("BansheeGrab", userRepository, context) { update.invoke() }
+            points > 2000 && prev < 2000 -> addMove("ConeLaunch", userRepository, context) { update.invoke() }
+            points > 4100 && prev < 4100 -> addMove("CoastalOOB", userRepository, context) { update.invoke() }
             else -> update.invoke()
         }
     }
-    if (category == "Infinite"){
-        when(points){
-            100 -> addMove("GrappleHook", userRepository,context){update.invoke()}
-            600 -> addMove("GrappleGroundPound", userRepository,context){update.invoke()}
-            700 -> addMove("InvincibleGlitch", userRepository,context){update.invoke()}
-            1000 -> addMove("TankGun", userRepository,context){update.invoke()}
+
+    if (category == "Infinite") {
+        when {
+            points > 100 && prev < 100 -> addMove("GrappleHook", userRepository, context) { update.invoke() }
+            points > 600 && prev < 600 -> addMove("GrappleGroundPound", userRepository, context) { update.invoke() }
+            points > 700 && prev < 700 -> addMove("InvincibleGlitch", userRepository, context) { update.invoke() }
+            points > 1000 && prev < 1000 -> addMove("TankGun", userRepository, context) { update.invoke() }
             else -> update.invoke()
         }
     }
-    if (category == "H4"){
-        when(points){
-            50 -> addMove("MuscleRunning", userRepository,context){update.invoke()}
-            800 -> addMove("ConcBoost", userRepository,context){update.invoke()}
-            2000 -> addMove("PhantomBumo", userRepository,context){update.invoke()}
-            3600 -> addMove("DawnSkip", userRepository,context){update.invoke()}
+
+    if (category == "H4") {
+        when {
+            points > 50 && prev < 50 -> addMove("MuscleRunning", userRepository, context) { update.invoke() }
+            points > 800 && prev < 800 -> addMove("ConcBoost", userRepository, context) { update.invoke() }
+            points > 2000 && prev < 2000 -> addMove("PhantomBumo", userRepository, context) { update.invoke() }
+            points > 3600 && prev < 3600 -> addMove("DawnSkip", userRepository, context) { update.invoke() }
             else -> update.invoke()
         }
     }
-    if (category == "Reach"){
-        when(points){
-            50 -> addMove("BobAppears", userRepository,context){update.invoke()}
-            800 -> addMove("WCskip", userRepository,context){update.invoke()}
-            2000 -> addMove("BridgeSkip", userRepository,context){update.invoke()}
-            4100 -> addMove("BuckLuck", userRepository,context){update.invoke()}
+
+    if (category == "Reach") {
+        when {
+            points > 50 && prev < 50 -> addMove("BobAppears", userRepository, context) { update.invoke() }
+            points > 800 && prev < 800 -> addMove("WCskip", userRepository, context) { update.invoke() }
+            points > 2000 && prev < 2000 -> addMove("BridgeSkip", userRepository,context){update.invoke()}
+            points > 4100 && prev < 4100 -> addMove("BuckLuck", userRepository,context){update.invoke()}
             else -> update.invoke()
         }
     }
-    if (category == "H5"){
-        when(points){
-            100 -> addMove("RampSlide", userRepository,context){update.invoke()}
-            800 -> addMove("AngelJump", userRepository,context){update.invoke()}
-            2000 -> addMove("VoidSkip", userRepository,context){update.invoke()}
-            4100 -> addMove("GhostTele", userRepository,context){update.invoke()}
+    if (category == "H5") {
+        when {
+            points > 100 && prev < 100 -> addMove("RampSlide", userRepository, context) { update.invoke() }
+            points > 800 && prev < 800 -> addMove("AngelJump", userRepository, context) { update.invoke() }
+            points > 2000 && prev < 2000 -> addMove("VoidSkip", userRepository, context) { update.invoke() }
+            points > 4100 && prev < 4100 -> addMove("GhostTele", userRepository, context) { update.invoke() }
             else -> update.invoke()
         }
     }
+
     update.invoke()
 }
 

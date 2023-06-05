@@ -30,19 +30,19 @@ interface UserDao {
         updateExistingUser(user)
     }
     @Transaction
-    fun addPoints(game: String){
+    fun addPoints(game: String, points:Int){
         val users = getAllUsers()
         val user = users[0]
         when(game){
-            "CE" -> user.H1atk++
-            "H2" -> user.H2atk++
-            "H2A"-> user.H2Aatk++
-            "H3" -> user.H3atk++
-            "H4" -> user.H4atk++
-            "H5" -> user.H5atk++
-            "Reach" -> user.reachAtk++
-            "ODST" -> user.ODSTatk++
-            "Infinite" -> user.infinite_atk++
+            "CE" -> user.H1atk+=points
+            "H2" -> user.H2atk+=points
+            "H2A"-> user.H2Aatk+=points
+            "H3" -> user.H3atk+=points
+            "H4" -> user.H4atk+=points
+            "H5" -> user.H5atk+=points
+            "Reach" -> user.reachAtk+=points
+            "ODST" -> user.ODSTatk+=points
+            "Infinite" -> user.infinite_atk+=points
             else -> {}
         }
         updateExistingUser(user)

@@ -1,9 +1,7 @@
 package com.example.hrclicker.screens
 
 import android.widget.Toast
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -50,6 +48,9 @@ fun ClickerScreen(navController: NavController, userRepository: UserRepository) 
     var count:Int by remember {
         mutableStateOf(0)
     }
+    var points: Int by remember {
+        mutableStateOf(1)
+    }
     val context = LocalContext.current
 
 
@@ -60,6 +61,7 @@ fun ClickerScreen(navController: NavController, userRepository: UserRepository) 
             cap = player!!.cap
         }
     }
+
 
     player?.let {
 
@@ -72,6 +74,30 @@ fun ClickerScreen(navController: NavController, userRepository: UserRepository) 
                 text = "Total points: ${totalPoints(player!!)}\ncurrent cap: $cap",
                 color = Color.White,
             )
+            Spacer(modifier = Modifier.height(20.dp))
+            val pointArray = arrayOf(1,10,100)
+            Row(Modifier.fillMaxWidth(),Arrangement.Center) {
+                for (x in pointArray){
+                    var color: Color = Color(8, 0, 30)
+                    if (x == points){
+                        color = Color(221, 136, 19)
+                    }
+                    Box(
+                        Modifier
+                            .background(color, shape = RoundedCornerShape(16.dp))
+                            .size(75.dp)
+                            .clickable { points = x }
+                    ){
+                        Text(
+                            text = "+$x",
+                            fontSize = 25.sp,
+                            color = Color.White,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                }
+
+            }
             Spacer(modifier = Modifier.height(20.dp))
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
@@ -108,15 +134,22 @@ fun ClickerScreen(navController: NavController, userRepository: UserRepository) 
                                         )
                                     ) {
                                         userRepository.performDatabaseOperation(Dispatchers.IO) {
-                                            userRepository.addPoints(clickButtons[index].title)
+                                            var prevPoints = pointsByGame(player!!, clickButtons[index].title)
+                                            var tempPoints = points
+                                            if (totalPoints(player!!) + points > cap!!) {
+                                                tempPoints = cap!! - totalPoints(player!!)
+                                                println("temp is "+tempPoints)
+                                            }
+                                            userRepository.addPoints(clickButtons[index].title, tempPoints)
                                             moveUnlockCheck(
                                                 pointsByGame(
                                                     player!!,
                                                     clickButtons[index].title
-                                                ) + 1,
+                                                ) + points,
                                                 userRepository,
                                                 clickButtons[index].title,
-                                                context
+                                                context,
+                                                prevPoints
                                             ) {
                                                 p++
                                             }
