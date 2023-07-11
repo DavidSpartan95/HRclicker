@@ -39,7 +39,6 @@ fun ScoreScreen(navController: NavController, userRepository: UserRepository, us
     var runnerJson: String? = null
     val context = LocalContext.current
 
-
     Surface(modifier = Modifier.fillMaxSize(),color = HR_dark_blue) {
 
         if (popupControl) {

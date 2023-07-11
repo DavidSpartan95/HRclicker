@@ -1,8 +1,6 @@
-package com.example.hrclicker.dataBase.moves
+package com.example.hrclicker.dataBase.converters
 
 import androidx.room.TypeConverter
-import androidx.room.TypeConverters
-import com.google.gson.Gson
 
 class StringArrayConverter {
     @TypeConverter

@@ -22,6 +22,7 @@ import com.example.hrclicker.dataBase.User
 import com.example.hrclicker.dataBase.UserRepository
 import com.example.hrclicker.functions.containsEmoticons
 import com.example.hrclicker.functions.hasMoreThan16Characters
+import com.example.hrclicker.ui.theme.DrawCharacter
 import com.example.hrclicker.ui.theme.HR_dark_blue
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -95,6 +96,7 @@ fun HomeScreen(navController: NavController, userRepository: UserRepository) {
                 }) {
                     Text(text = "NewAcc")
                 }
+                DrawCharacter(user!!.emblem)
             }
         }
 
@@ -123,7 +125,6 @@ fun HomeScreen(navController: NavController, userRepository: UserRepository) {
                             Toast.LENGTH_LONG)
                             .show()
                     }else{
-
                         userRepository.performDatabaseOperation(Dispatchers.IO){
                             userRepository.addUser(
                                     User(
@@ -154,12 +155,12 @@ fun PopUpScreen(yesFun:()->Unit,noFun:()-> Unit) {
 
         Box(
             Modifier
-            .background(color = HR_dark_blue, shape = RoundedCornerShape(8.dp))
-            .size(250.dp)
-            .fillMaxWidth()
-            .padding(2.dp)
-            .border(width = 1.dp, color = Color.White, shape = RoundedCornerShape(8.dp))
-            .padding(20.dp)
+                .background(color = HR_dark_blue, shape = RoundedCornerShape(8.dp))
+                .size(250.dp)
+                .fillMaxWidth()
+                .padding(2.dp)
+                .border(width = 1.dp, color = Color.White, shape = RoundedCornerShape(8.dp))
+                .padding(20.dp)
         ) {
             Text(text = "Are you sure you want to delete your account and make a new one?", color = Color.White)
             Button(
